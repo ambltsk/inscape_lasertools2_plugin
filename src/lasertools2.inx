@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Lasertools (color)</_name>
+    <id>org.lasertools.lasertools2</id>
+	<dependency type="executable" location="inx">lasertools2.py</dependency>
+	<param name='active-tab' type="notebook">
+
+		<page name='lastertools' _gui-text='Lasertools (colors)'>
+			<param name="laser-command-perimeter" type="string" _gui-text="Laser ON command perimeter:">M03 S240</param>
+			<param name="laser-command-engrave" type="string" _gui-text="Laser ON command engrave:">M03 S127</param>
+			<param name="laser-command" type="string" _gui-text="Laser ON command infill:">M03 S70</param>
+			<param name="laser-off-command" type="string" _gui-text="Laser OFF command:">M03 S1</param>
+			<param name="laser-beam-with" type="float" precision="2" min="0.00" max="10.00" _gui-text="Laser beam with (mm):">0.20</param>
+			<param name="travel-speed" type="int" min="0" max="7000" _gui-text="Laser travel speed (mm/min):">3000</param>
+			<param name="laser-speed" type="int" min="0" max="7000" _gui-text="Laser infill speed (mm/min):">1500</param>
+			<param name="laser-param-speed" type="int" min="0" max="7000" _gui-text="Laser perimeter speed (mm/min):">150</param>
+			<param name="laser-engrave-speed" type="int" min="0" max="7000" _gui-text="Laser engrave speed (mm/min):">1500</param>
+			<param name="passes" type="int" min="1" max="100" _gui-text="Perimetr passes:">1</param>
+			<param name="z-stepdown" type="float" precision="2" min="-50.00" max="0.00" _gui-text="Z-Stepdown per pass (mm):">0.00</param>
+			<param name="add-contours" type="boolean" _gui-text="Add contours">true</param>
+			<param name="add-infill" type="boolean" _gui-text="Add infill on closed loops">true</param>
+			<param name="directory" type="string" _gui-text="Directory:">/insert your target directory here</param>
+			<param name="filename" type="string" _gui-text="Filename:">output.gcode</param>
+		</page>
+
+		<page name='preferences' _gui-text='Preferences'>
+			<param name="contour-tolerance" type="float" precision="2" min="0.00" max="1.00" _gui-text="Contour tolerance (mm):">0.1</param>
+			<param name="infill-overshoot" type="float" precision="1" min="0.0" max="10.0" _gui-text="Infill overshoot (mm):">0</param>
+			<param name="power-delay" type="float" min="0" max="1000" _gui-text="Power-On delay (ms):">0</param>
+			<param name="power-off-delay" type="float" min="0" max="1000" _gui-text="Power-Off delay (ms):">0</param>
+			<param name="linuxcnc" type="boolean" _gui-text="LinuxCNC G64 trajectory planning">false</param>
+			<param name="remove-tiny-infill-paths" type="boolean" _gui-text="Remove tiny infill paths">false</param>
+			<param name="add-numeric-suffix-to-filename" type="boolean" _gui-text="Add numeric suffix to filename">true</param>
+			<param name="create-log" type="boolean" _gui-text="Create log files">true</param>
+			<param name="multi_thread" type="boolean" _gui-text="Enable multithreading">true</param>
+		</page>
+
+        <page name='color' _gui-text='Color'>
+            <param name="out-cut-color" type="string" _gui-text="Color of the outer contour:">#ff0000</param>
+            <param name="engrave-color" type="string" _gui-text="The color of the engraving outline:">#00ff00</param>
+            <param name="fill-color" type="string" _gui-text="Engraving color (fill):">#0000ff</param>
+
+        </page>
+
+		<page name='gcode' _gui-text='G-Code'>
+			<param name="name" type="description">Prefix G-Code</param>
+			<param name="prefix1" type="string" _gui-text=" ">G90	;Absolute programming</param>
+			<param name="prefix2" type="string" _gui-text=" ">G21	;Programming in millimeters (mm)</param>
+			<param name="prefix3" type="string" _gui-text=" "></param>
+			<param name="prefix4" type="string" _gui-text=" "></param>
+			<param name="prefix5" type="string" _gui-text=" ">M03 S1 ;Activate laser and set power to 0 (CUSTOM)</param>
+
+			<param name="name" type="description">Suffix G-Code</param>
+			<param name="suffix1" type="string" _gui-text=" ">M05 S0	;Deactivate laser and set power to 0 (CUSTOM)</param>
+			<param name="suffix2" type="string" _gui-text=" "></param>
+			<param name="suffix3" type="string" _gui-text=" "></param>
+			<param name="suffix4" type="string" _gui-text=" "></param>
+			<param name="suffix5" type="string" _gui-text=" ">M02	;End of program</param>
+		</page>
+
+		<page name='bb_preview' _gui-text='Bounding Box'>
+			<param name="generate-bb-preview" type="boolean" _gui-text="Generate G-Code for bounding box preview">false</param>
+			<param name="generate-cross-preview" type="boolean" _gui-text="Generate G-Code for center cross preview">false</param>
+			<param name="laser-command-preview" type="string" _gui-text="Laser ON command preview:">S0.1</param>
+			<param name="laser-speed-preview" type="int" min="0" max="7000" _gui-text="Laser speed for preview (mm/min):">1200</param>
+			<param name="repetitions-preview" type="int" min="1" max="100" _gui-text="Number of repetitions:">1</param>
+		</page>
+	</param>
+
+	<effect needs-live-preview="false">
+		<effects-menu>
+			<submenu _name="Lasertools"/>
+		</effects-menu>
+		<object-type>path</object-type>
+  	</effect>
+
+	<script>
+		<command location="inx" interpreter="python">lasertools2.py</command>
+	</script>
+
+</inkscape-extension>
