@@ -10,7 +10,7 @@ Made in order to get the control program file all_in_one.
 If you do not use contours for filling - disable the "Add infill" option.
 
 The "passes" option determines the number of passes only for internal and external contours to be cut.
-**************************************************************************8
+**************************************************************************
 ## Intsruction
 All instructions on [lasertools](https://github.com/ChrisWag91/Inkscape-Lasertools-Plugin)
 
