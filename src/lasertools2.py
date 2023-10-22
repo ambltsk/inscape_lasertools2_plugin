@@ -757,10 +757,12 @@ class laser_gcode(inkex.EffectExtension):
         ft = "F%.1f" % tool['travel feed']
         g = "; START " + strategy+" strategy\nG01 " + f + "\n"
 
+        perimetr_strategys = ['engrave', 'innercut', 'perimeter']
+
         # linuxcnc trajectory planning to limit corner burns and acceleration burns
         if strategy == 'infill' and self.options.linuxcnc:
             g += "G64 P0 ;linuxcnc continuous mode trajectory planning\n"
-        if strategy == 'perimeter' and self.options.linuxcnc:
+        if strategy in perimetr_strategys and self.options.linuxcnc:
             g += "G64 P0.15 ;linuxcnc blend tolerence mode trajectory planning\n"
 
         # set the begining past coordinates to unlikely numbers
@@ -833,14 +835,14 @@ class laser_gcode(inkex.EffectExtension):
                     # perimeter strategy
                     #############################
                     # turns off laser before issuing a G00 move instruction
-            elif newcoord_different and s[1] == 'move' and strategy == "perimeter":
+            elif newcoord_different and s[1] == 'move' and strategy in perimetr_strategys:
                 # turn off laser before fast move
                 g += tool['gcode after path'] + "\n"
                 g += "G00" + c(si[0]) + " " + ft + "\n"
                 # write past used command and coordinates
                 pastX, pastY, lg = round(
                     si[0][0], 2), round(si[0][1], 2), 'G00'
-            elif newcoord_different and s[1] == 'line' and strategy == "perimeter":
+            elif newcoord_different and s[1] == 'line' and strategy in perimetr_strategys:
                 if lg == 'G00':
                     # burn laser only after a G00 move
                     g += tool['gcode before path'] + " " + ft + "\n"
@@ -1417,7 +1419,7 @@ class laser_gcode(inkex.EffectExtension):
                     curve = self.parse_curve(cspe, layer)
                     self.draw_curve(curve, layer, engraving_group)
 
-                    gcode_pass += self.generate_gcode(curve, layer, self.tool_perimeter, "perimeter")
+                    gcode_pass += self.generate_gcode(curve, layer, self.tool_perimeter, self._strategy)
 
         if gcode_pass != '':
             if self.cut_passes > 1:
@@ -1761,21 +1763,24 @@ class laser_gcode(inkex.EffectExtension):
             if len(self.engrave_paths) > 0:
                 # Engraving line (default green) 1 passes
                 self.svg.selected_paths = self.engrave_paths
-                self.tool_perimeter["feed"] = self.options.laser_param_speed
+                self.tool_perimeter["penetration feed"] = self.options.laser_engrave_speed
                 self.tool_perimeter["gcode before path"] = (delayOn + self.options.laser_command_engrave)
+                self._strategy = 'engrave'
                 self.engraving()
 
-            self.tool_perimeter["feed"] = self.options.laser_engrave_speed
+            self.tool_perimeter["penetration feed"] = self.options.laser_param_speed
             self.tool_perimeter["gcode before path"] = (delayOn + self.options.laser_command_perimeter)
             self.cut_passes = self.options.passes
 
             if len(self.other_paths) > 0:
+                self._strategy = 'innercut'
                 self.svg.selected_paths = self.other_paths
                 self.sort_paths(self.svg.selected_paths)
                 self.engraving()
 
             if len(self.outter_paths) > 0:
                 self.svg.selected_paths = self.outter_paths
+                self._strategy = 'perimeter'
                 self.engraving()
 
         if self.options.generate_bb_preview:
